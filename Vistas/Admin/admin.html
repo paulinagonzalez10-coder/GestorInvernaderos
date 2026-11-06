@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../../CSS/global.css">
+        <link rel="stylesheet" href="../../CSS/admin.css">
+        <title>Panel Admin </title>
+        <script defer src="../../JS/app.js"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    </head>
+    <body>
+        <header class="navbar">
+            <!--Encabezado página admin-->
+            <a href="admin.html" class="logo logo-admin">&#x1FAB4; &#x1F6E1;&#xFE0F; Gestión de Invernaderos</a>
+            <nav class="nav-links">
+                <a href="admin.html" class="nav-button active">Inicio Administrador</a>
+                <a href="admin-usuarios.html" class="nav-button">Usuarios</a>
+                <a href="admin-invernaderos.html" class="nav-button">Invernaderos</a>
+                <a href="../login.html" class="nav-button button-logout">Cerrar Sesión</a>
+            </nav>
+        </header>
+
+        <main class="main-container">
+            <h2>Panel de Administración Global</h2>
+
+            <!--Panel de métricas globales-->
+            <div class="admin-grid" x-data="resumenAdmin()">
+                <article class="card metric-card"><h2>Total de usuarios</h2><p class="metric-value" x-text="totalUsuarios"></p></article>
+                <article class="card metric-card"><h2>Cantidad de invernaderos</h2><p class="metric-value" x-text="cantidadInvernaderos"></p></article>
+                <article class="card metric-card"><h2>Total de cultivos</h2><p class="metric-value" x-text="totalCultivos"></p></article>
+                <article class="card metric-card"><h2>Total de sensores</h2><p class="metric-value" x-text="totalSensores"></p></article>
+                <article class="card metric-card"><h2>Datos recolectados</h2><p class="metric-value" x-text="datosRecolectados"></p></article>
+            </div>
+            <!--cambio de métricas estáticas a las que están en store-->
+        </main>
+    </body>
+</html>

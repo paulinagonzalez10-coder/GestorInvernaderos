@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../../CSS/invernadero.css">
+  <link rel="stylesheet" href="../../CSS/global.css">
+  <title>Mi Invernadero</title>
+  <script defer src="../../JS/app.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body>
+<header class="navbar">
+  <a href="dashboard.html" class="logo">&#x1FAB4; Gestión Invernaderos</a>
+  <nav class="navbar-navigation" aria-label="Navegación principal">
+    <input type="checkbox" id="menu-toggle" class="menu-toggle"><label for="menu-toggle" class="menu-toggle-label">☰ Menú</label>
+    <div class="nav-links">
+      <a href="dashboard.html" class="nav-button">Inicio</a>
+      <a href="invernadero.html" class="nav-button active">Invernadero</a>
+      <a href="agregar.html" class="nav-button">Agregar</a>
+      <a href="estadisticas.html" class="nav-button">Estadísticas</a>
+      <a href="../login.html" class="nav-button button-logout">Cerrar Sesión</a>
+    </div>
+  </nav>
+</header>
+<main class="main-container" x-data>
+  <h1>Mi Invernadero</h1>
+    <section class="card" x-data="filtroCultivos()">
+    <h2>Cultivos</h2>
+    <div class="cultivo-controls">
+      <div>
+        <label for="filtro-tipo">Filtrar por tipo</label>
+        <select id="filtro-tipo" x-model="filtroTipo">
+          <option value="">Todos los tipos</option>
+          <template x-for="tipo in tipos" :key="tipo">
+            <option :value="tipo" x-text="tipo"></option>
+          </template>
+        </select>
+      </div>
+      <div>
+        <label for="orden-fecha">Ordenar por fecha</label>
+        <select id="orden-fecha" x-model="orden">
+          <option value="fecha-asc">Más antigua primero</option>
+          <option value="fecha-desc">Más reciente primero</option>
+        </select>
+      </div>
+    </div>
+    <p class="muted" x-show="cultivosVisibles.length === 0" role="status">
+      No hay cultivos para este filtro.
+      <button type="button" class="button-secundario" @click="limpiarFiltro()" x-show="filtroTipo !== ''">Quitar filtro</button>
+    </p>
+    <p class="mensaje-exito" role="status" x-show="mensajeCultivo !== ''" x-text="mensajeCultivo"></p>
+    <div class="table-container" x-show="cultivosVisibles.length > 0">
+      <table class="tabla-cultivos">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Fecha</th>
+            <th>Estacional</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="cultivo in cultivosVisibles" :key="cultivo.id">
+          <tr>
+            <td x-text="cultivo.nombre"></td>
+            <td x-text="cultivo.tipo"></td>
+            <td x-text="cultivo.fecha"></td>
+            <td x-text="$store.datos.textoEstacional(cultivo.estacional)"></td>
+            <td class="actions-cell">
+              <button type="button" class="action-button edit" @click="iniciarEdicion(cultivo)">Editar</button>
+              <button type="button" class="action-button delete" @click="eliminarCultivo(cultivo)">Eliminar</button>
+            </td>
+          </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+
+    <!--Edición Cultivos-->
+    <form class="edit-panel" x-show="cultivoEditandoId !== null" @submit.prevent="guardarEdicion()" novalidate>
+      <h3>Editar cultivo</h3>
+      <div>
+        <label for="edit-cultivo-nombre">Nombre</label>
+        <input id="edit-cultivo-nombre" type="text" maxlength="100" x-model="formCultivo.nombre" :aria-invalid="String(Boolean(erroresCultivo.nombre))">
+        <span class="campo-error" x-show="erroresCultivo.nombre" x-text="erroresCultivo.nombre"></span>
+      </div>
+      <div>
+        <label for="edit-cultivo-tipo">Tipo</label>
+        <input id="edit-cultivo-tipo" type="text" maxlength="50" x-model="formCultivo.tipo" :aria-invalid="String(Boolean(erroresCultivo.tipo))">
+        <span class="campo-error" x-show="erroresCultivo.tipo" x-text="erroresCultivo.tipo"></span>
+      </div>
+      <div>
+        <label for="edit-cultivo-fecha">Fecha</label>
+        <input id="edit-cultivo-fecha" type="date" x-model="formCultivo.fecha" :aria-invalid="String(Boolean(erroresCultivo.fecha))">
+        <span class="campo-error" x-show="erroresCultivo.fecha" x-text="erroresCultivo.fecha"></span>
+      </div>
+      <div>
+        <label><input type="checkbox" x-model="formCultivo.estacional"> Estacional</label>
+      </div>
+      <div>
+        <button class="button-primario" type="submit">Guardar cambios</button>
+        <button type="button" class="button-secundario" @click="cancelarEdicion()">Cancelar</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="card" x-data="edicionSensores()">
+    <h2>Sensores</h2>
+    <p class="mensaje-exito" role="status" x-show="mensajeSensor !== ''" x-text="mensajeSensor"></p>
+    <div class="table-container">
+      <table class="tabla-sensores">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Unidad</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="sensor in $store.datos.sensores" :key="sensor.id">
+          <tr>
+            <td x-text="sensor.nombre"></td>
+            <td x-text="sensor.descripcion"></td>
+            <td x-text="sensor.unidad"></td>
+            <td><span :class="$store.datos.visualEstado(sensor.estado).clase" x-text="$store.datos.visualEstado(sensor.estado).icono + ' ' + sensor.estado"></span></td>
+            <td class="actions-cell">
+              <button type="button" class="action-button edit" @click="iniciarEdicion(sensor)">Editar</button> 
+              <button type="button" class="action-button delete" @click="eliminarSensor(sensor)">Eliminar</button>
+              <!--Olvidé mencionarlo antes pero @click hace lo mismo que x-on:click-->
+            </td>
+          </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+
+    <!--Edición de sensores-->
+    <form class="edit-panel" x-show="sensorEditandoId !== null" @submit.prevent="guardarEdicion()" novalidate>
+      <h3>Editar sensor</h3>
+      <p class="muted">Sensor: <strong x-text="nombreSensor"></strong> (el nombre no se puede cambiar)</p>
+      <div>
+        <label for="edit-sensor-descripcion">Descripción</label>
+        <input id="edit-sensor-descripcion" type="text" maxlength="150" x-model="formSensor.descripcion" :aria-invalid="String(Boolean(erroresSensor.descripcion))">
+        <span class="campo-error" x-show="erroresSensor.descripcion" x-text="erroresSensor.descripcion"></span>
+      </div>
+      <div>
+        <label for="edit-sensor-unidad">Unidad</label>
+        <input id="edit-sensor-unidad" type="text" maxlength="20" x-model="formSensor.unidad" :aria-invalid="String(Boolean(erroresSensor.unidad))">
+        <span class="campo-error" x-show="erroresSensor.unidad" x-text="erroresSensor.unidad"></span>
+      </div>
+      <div>
+        <label for="edit-sensor-estado">Estado</label>
+        <select id="edit-sensor-estado" x-model="formSensor.estado">
+          <option value="Activo">Activo</option>
+          <option value="Mantenimiento">Mantenimiento</option>
+          <option value="Desconectado">Desconectado</option>
+        </select>
+      </div>
+      <div>
+        <button class="button-primario" type="submit">Guardar cambios</button>
+        <button type="button" class="button-secundario" @click="cancelarEdicion()">Cancelar</button>
+      </div>
+    </form>
+  </section>
+</main>
+</body>
+</html>

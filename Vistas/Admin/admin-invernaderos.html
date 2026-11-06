@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../../CSS/global.css">
+        <link rel="stylesheet" href="../../CSS/admin.css">
+        <title>Invernaderos - Panel Admin</title>
+        <script defer src="../../JS/app.js"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    </head>
+    <body>
+        <header class="navbar">
+            <!--Encabezado página admin-->
+            <a href="admin.html" class="logo logo-admin">&#x1FAB4; &#x1F6E1;&#xFE0F; Gestión de Invernaderos</a>
+            <nav class="nav-links">
+                <a href="admin.html" class="nav-button">Inicio Administrador</a>
+                <a href="admin-usuarios.html" class="nav-button">Usuarios</a>
+                <a href="admin-invernaderos.html" class="nav-button active">Invernaderos</a>
+                <a href="../login.html" class="nav-button button-logout">Cerrar Sesión</a>
+            </nav>
+        </header>
+
+        <main class="main-container">
+            <h1>Invernaderos globales</h1>
+            <section class="card admin-table-container" x-data="invernaderosGlobal()">
+                <h2>&#x1F4CB; Consulta global de invernaderos</h2>
+                <p>Cultivos y sensores de usuarios del sistema.</p>
+
+                <div class="admin-filter">
+                <label for="filter-usuario">Filtrar por usuario</label>
+                <select id="filter-usuario" x-model="usuarioId">
+                    <option value="">Todos los usuarios</option>
+                    <template x-for="usuario in $store.datos.usuarios" :key="usuario.id">
+                    <option :value="String(usuario.id)" x-text="usuario.nombre"></option>
+                    </template>
+                </select>
+                </div>
+
+                <p class="muted" x-show="recursosVisibles.length === 0" role="status">No hay cultivos ni sensores para este usuario.</p>
+                <p class="muted" x-show="recursosVisibles.length === 0">Soy Admin &#x1F60E;</p>
+                <!--En mi opinión, esta linea es un mal necesario :v-->
+
+                <div class="table-container" x-show="recursosVisibles.length > 0">
+                <table class="admin-table">
+                    <thead>
+                    <tr><th>Propietario</th><th>Recurso</th><th>Tipo</th><th>Estado</th></tr>
+                    </thead>
+                    <tbody>
+                    <template x-for="r in recursosVisibles" :key="r.clave">
+                    <tr>
+                        <td x-text="r.propietario"></td>
+                        <td x-text="r.recurso"></td>
+                        <td x-text="r.tipo"></td>
+                        <td><span :class="r.clase" x-text="r.estado"></span></td>
+                    </tr>
+                    </template>
+                    </tbody>
+                </table>
+                </div>
+            </section>
+            <!--Todos los datos que estaban estáticos aquí ahota están en app.js -->
+        </main>
+    </body>
+</html>

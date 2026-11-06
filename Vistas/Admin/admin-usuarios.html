@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../../CSS/global.css">
+  <link rel="stylesheet" href="../../CSS/admin.css">
+  <title>Usuarios - Panel Admin</title>
+  <script defer src="../../JS/app.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body>
+<header class="navbar">
+    <a href="admin.html" class="logo logo-admin">&#x1FAB4; &#x1F6E1;&#xFE0F; Gestión Invernaderos</a>
+  <nav class="navbar-navigation" aria-label="Navegación principal">
+    <input type="checkbox" id="menu-toggle" class="menu-toggle"><label for="menu-toggle" class="menu-toggle-label">&#x2630; Menú</label>
+    <div class="nav-links">
+      <a href="admin.html" class="nav-button">Inicio Administrador</a>
+      <a href="admin-usuarios.html" class="nav-button active">Usuarios</a>
+      <a href="admin-invernaderos.html" class="nav-button">Invernaderos</a>
+      <a href="../login.html" class="nav-button button-logout">Cerrar Sesión</a>
+    </div>
+  </nav>
+</header>
+<main class="main-container">
+  <h1>Gestión de usuarios</h1>
+  <section class="card admin-table-container" x-data="adminUsuarios()">
+    <div class="admin-header-actions">
+      <h2>&#x1F465; Usuarios del sistema</h2>
+      <button type="button" class="button button-primario" @click="abrirFormulario()" :aria-expanded="String(mostrarForm)" aria-controls="form-crear-usuario" x-show="!mostrarForm">+ Crear nuevo usuario</button>
+    </div>
+
+    <p class="mensaje-exito" role="status" x-show="mensajeUsuario !== ''" x-text="mensajeUsuario"></p>
+
+    <form class="user-form" id="form-crear-usuario" @submit.prevent="crearUsuario()" x-show="mostrarForm" novalidate>
+      <h3>Crear usuario de demostración</h3>
+      <div class="user-fields">
+        <div>
+          <label for="user-name">Nombre</label>
+          <input id="user-name" type="text" maxlength="100" x-model="nuevo.nombre" :aria-invalid="String(Boolean(erroresUsuario.nombre))">
+          <span class="campo-error" x-show="erroresUsuario.nombre" x-text="erroresUsuario.nombre"></span>
+        </div>
+        <div>
+          <label for="user-email">Correo</label>
+          <input id="user-email" type="text" maxlength="120" x-model="nuevo.correo" :aria-invalid="String(Boolean(erroresUsuario.correo))">
+          <span class="campo-error" x-show="erroresUsuario.correo" x-text="erroresUsuario.correo"></span>
+        </div>
+        <div class="user-actions">
+          <button class="button-primario" type="submit">Crear usuario</button>
+          <button type="button" @click="cancelarAlta()">Cancelar</button>
+          <!--Por cierto, Alta refiere a cualquier cosa que agregue o cree algo
+          Por otro lado, baja es para eliminación de registros y similares
+          Online salía que Alta y Baja eran buenas terminologías para contexto de administración
+          Supuestamente, alguien sin experiencia técnica lo entendería
+          pero inicialmente me confundió el termino al investigar cosas para alpine
+          ya que la mayoría de los tutoriales están en inglés
+          y de los que hay en español usan términos como estos
+          y pensé por un momento que se referían a alta como "Dar de alta" en contexto médico
+          así que no me hacía sentido. Ahora sí-->
+        </div>
+      </div>
+    </form>
+
+    <div class="table-container">
+      <table class="admin-table">
+        <thead>
+          <tr><th>Usuario</th><th>Correo</th><th>Cultivos</th><th>Sensores</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+          <template x-for="usuario in $store.datos.usuarios" :key="usuario.id">
+          <tr>
+            <td x-text="usuario.nombre"></td>
+            <td x-text="usuario.correo"></td>
+            <td x-text="contarCultivos(usuario.id)"></td>
+            <td x-text="contarSensores(usuario.id)"></td>
+            <td class="actions-cell">
+              <button type="button" class="button-action edit" @click="iniciarEdicion(usuario)">Editar</button>
+              <button type="button" class="button-action delete" @click="eliminarUsuario(usuario)" :disabled="usuario.rol === 'admin'">Eliminar</button>
+            </td>
+          </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+
+    <form class="user-form" x-show="editandoId !== null" @submit.prevent="guardarEdicion()" novalidate>
+      <h3>Editar usuario</h3>
+      <p class="muted">Usuario: <strong x-text="nombreEditando"></strong> (la clave y el rol no se pueden cambiar)</p>
+      <div class="user-fields">
+        <div>
+          <label for="edit-user-name">Nombre</label>
+          <input id="edit-user-name" type="text" maxlength="100" x-model="formEditar.nombre" :aria-invalid="String(Boolean(erroresEditar.nombre))">
+          <span class="campo-error" x-show="erroresEditar.nombre" x-text="erroresEditar.nombre"></span>
+        </div>
+        <div>
+          <label for="edit-user-email">Correo</label>
+          <input id="edit-user-email" type="text" maxlength="120" x-model="formEditar.correo" :aria-invalid="String(Boolean(erroresEditar.correo))">
+          <span class="campo-error" x-show="erroresEditar.correo" x-text="erroresEditar.correo"></span>
+        </div>
+        <div class="user-actions">
+          <button class="button-primario" type="submit">Guardar cambios</button>
+          <button type="button" @click="cancelarEdicion()">Cancelar</button>
+        </div>
+      </div>
+    </form>
+  </section>
+</main>
+<!--Había un script aquí pero lo moví a app.js-->
+</body>
+<!--Olvidé el script que hace que esto funcione, editar código a las 2 am no es buena idea-->
+<!--Sin querer puse la versión que tenía un script en vez de la que corresponde aquí, mezclé los archivos de prueba con los del proyecto y son casi las 1 am-->
+</html>
+

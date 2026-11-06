@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../../CSS/estadisticas.css">
+  <link rel="stylesheet" href="../../CSS/global.css">
+  <title>Datos - Estadísticas</title>
+  <script defer src="../../JS/app.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body>
+<header class="navbar">
+  <a href="dashboard.html" class="logo">&#x1FAB4; Gestión Invernaderos</a>
+  <nav class="navbar-navigation" aria-label="Navegación principal">
+    <input type="checkbox" id="menu-toggle" class="menu-toggle"><label for="menu-toggle" class="menu-toggle-label">☰ Menú</label>
+    <div class="nav-links">
+      <a href="dashboard.html" class="nav-button">Inicio</a>
+      <a href="invernadero.html" class="nav-button">Invernadero</a>
+      <a href="agregar.html" class="nav-button">Agregar</a>
+      <a href="estadisticas.html" class="nav-button active">Estadísticas</a>
+      <a href="../login.html" class="nav-button button-logout">Cerrar Sesión</a>
+    </div>
+  </nav>
+</header>
+<main class="main-container" x-data="estadisticas()">
+  <h1>Historial de datos de sensores</h1>
+  <section class="card">
+    <div class="control-datos">
+      <div class="filter-datos">
+        <label for="sensor-pick">Seleccionar sensor</label>
+        <select id="sensor-pick" x-model="sensorNombre">
+          <template x-for="s in sensoresConLecturas" :key="s.id">
+            <option :value="s.nombre" x-text="s.nombre + ' (' + s.unidad + ')'"></option>
+          </template>
+        </select>
+      </div>
+      <div class="filter-datos">
+        <label for="limit-pick">Mostrar últimos</label>
+        <select id="limit-pick" x-model="limite">
+          <option value="10">10 registros</option>
+          <option value="50">50 registros</option>
+          <option value="100">100 registros</option>
+        </select>
+      </div>
+    </div>
+
+    <figure class="chart-container" aria-labelledby="titulo-grafico">
+      <figcaption id="titulo-grafico" x-text="tituloGrafico"></figcaption>
+      <div x-html="graficoHtml"></div>
+    </figure>
+
+    <div class="table-container">
+      <table class="tabla-datos">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Sensor</th>
+            <th>Valor medido</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="l in lecturasTabla" :key="l.sensor + l.fecha">
+            <tr>
+              <td x-text="formatearFecha(l.fecha)"></td>
+              <td x-text="l.sensor"></td>
+              <td x-text="l.valor + ' ' + unidad"></td>
+            </tr>
+          </template>
+          <tr x-show="lecturasTabla.length === 0">
+            <td colspan="3">No hay lecturas para este sensor.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+</body>
+</html>

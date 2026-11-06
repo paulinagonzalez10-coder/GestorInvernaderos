@@ -1,0 +1,178 @@
+.admin-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.metric-card h3{
+    font-size: 1rem;
+}
+
+.metric-value{
+    font-weight: bold;
+    margin-top: 0.5rem;
+}
+
+.admin-header-actions{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;    
+}
+
+.admin-header-actions .button{
+    width: auto;
+}
+
+.admin-table-container{
+    margin-top: 2rem;
+}
+
+
+.admin-filter{
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-filter label{
+    font-size: 0.9rem;
+    color:black;
+}
+
+.admin-filter select{
+    border: 1px solid;
+    color:black;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+}
+
+.admin-table th, 
+.admin-table td{
+    border-bottom: 1px solid;
+    text-align: center;
+}
+
+
+.admin-table th{
+    font-size: 0.85rem;
+}
+
+.button-action.delete {
+    background-color: #FCE8E6;
+    color: #8A2923;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #E9B8B3;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.button-action.edit {
+    background-color: #EAF5C9;
+    color: #105C34;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #C5D98A;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Acento terracota para diferenciar el panel de administración */
+
+
+.main-container > h2,
+.admin-header-actions h3,
+.admin-table-container > h3 {
+    color: #8c3b0d;
+}
+
+.admin-grid .metric-card {
+    border-top-color: #8c3b0d;
+}
+
+.admin-grid .metric-card h3 {
+    color: #8c3b0d;
+}
+
+.admin-grid .metric-value {
+    color: #71300d;
+}
+
+.admin-table th {
+    color: #71300d;
+    background: #f5e8df;
+}
+
+.admin-filter select {
+    background-color: #fbf3ed;
+    border-color: #d8b29a;
+}
+
+.admin-header-actions .button-primario {
+    background: #8c3b0d;
+    border-color: #8c3b0d;
+}
+
+.admin-header-actions .button-primario:hover {
+    background: #71300d;
+    border-color: #71300d;
+}
+.user-form {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: #fbf3ed;
+    border: 1px solid #d8b29a;
+    border-radius: 8px;
+}
+
+.user-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr));
+    gap: 0.75rem;
+    align-items: end;
+}
+
+.user-actions { 
+    display: flex; flex-wrap: wrap; gap: 0.5rem; 
+}
+.user-actions button { 
+    width: auto; 
+}
+.admin-table-container > h2 { 
+    color: #8c3b0d; 
+}
+
+.user-fields label {
+    min-width: 0;
+}
+
+.user-fields input {
+    width: 100%;
+}
+
+.user-actions {
+    align-items: stretch;
+}
+
+.user-actions button {
+    flex: 1 1 8rem;
+}
+
+.admin-table .button-action {
+    margin: 0.15rem;
+    white-space: nowrap;
+}
+
+@media (max-width: 520px) {
+    .admin-header-actions .button,
+    .user-actions button {
+        width: 100%;
+    }
+
+    .admin-table .button-action {
+        display: inline-block;
+    }
+}

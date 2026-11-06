@@ -1,0 +1,404 @@
+:root {
+    --color-primary: #16834A;
+    --color-primary-dark: #105C34;
+    --color-page: #F3F8EF;
+    --color-surface: #FFFFFF;
+    --color-border: #C6DDCA;
+    --color-text: #20352A;
+    --color-muted: #4B6652;
+    --color-accent: #A6C936;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--color-page);
+    color: var(--color-text);
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.5;
+}
+
+.navbar{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+    box-shadow: 0 2px 8px rgba(29, 68, 47, 0.06);
+}
+
+.main-container {
+    width: min(1100px, calc(100% - 2rem));
+    margin: 2rem auto;
+    flex: 1;
+}
+
+h1, h2, h3 {
+    color: var(--color-text);
+    line-height: 1.25;
+}
+
+h1, h2 {
+    margin-top: 0;
+}
+
+label {
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+input, select, textarea {
+    max-width: 100%;
+    padding: 0.65rem 0.75rem;
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font: inherit;
+}
+
+button, .button {
+    padding: 0.65rem 1rem;
+    color: var(--color-primary-dark);
+    background: #E3F4E7;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font: inherit;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+button:hover, .button:hover {
+    background: #D0EBCF;
+}
+
+a {
+    color: var(--color-primary-dark);
+}
+
+.admin-table, .tabla-datos, .tabla-cultivos, .tabla-sensores {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--color-surface);
+}
+
+.admin-table th, .admin-table td,
+.tabla-datos th, .tabla-datos td,
+.tabla-cultivos th, .tabla-cultivos td,
+.tabla-sensores th, .tabla-sensores td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.admin-table th, .tabla-datos th,
+.tabla-cultivos th, .tabla-sensores th {
+    color: var(--color-primary-dark);
+    background: #DDF1E1;
+    font-weight: 600;
+}
+
+@media (max-width: 720px) {
+    .navbar {
+        align-items: center;
+        flex-direction: row;
+        gap: 0.75rem;
+        padding: 1rem;
+    }
+
+    .navbar-navigation {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.5rem;
+    }
+
+    .menu-toggle {
+        display: block;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+    }
+
+    .menu-toggle-label {
+        display: block;
+        width: fit-content;
+        padding: 0.5rem 1rem;
+        color: white;
+        background: var(--color-primary);
+        border: 1px solid var(--color-primary-dark);
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .menu-toggle:focus-visible + .menu-toggle-label {
+        outline: 3px solid var(--color-accent);
+        outline-offset: 2px;
+    }
+
+    .nav-links {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        z-index: 10;
+        display: none;
+        min-width: 12rem;
+        padding: 0.75rem;
+        flex-direction: column;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        box-shadow: 0 3px 12px rgba(29, 68, 47, 0.12);
+    }
+
+    .menu-toggle:checked + .menu-toggle-label + .nav-links {
+        display: flex;
+    }
+
+    .nav-button {
+        width: auto;
+    }
+}
+
+.logo{
+    text-align: center;
+    font-size: 1.05rem;
+    font-weight: bold;
+    text-decoration:none;
+}
+
+
+.navbar-navigation {
+    display: flex;
+    align-items: center;
+}
+
+.menu-toggle,
+.menu-toggle-label {
+    display: none;
+}
+
+.nav-links{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+
+.nav-button{
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    width: auto;
+    display: inline-block;
+    text-align: center;
+    background: transparent;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.card {
+  border: 1px solid;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+
+
+
+.danger-mark{
+    /*background: #f08080;
+    color: #8b0000;*/
+    background: #FCE8E6;
+    color: #8A2923;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.success-mark{
+    /*background: lightgreen;
+    color: darkgreen;*/
+    background: #E5F0E8;
+    color: #1E4D37;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.warning-mark{
+    
+    /*background: rgb(255, 255, 202);
+    color: rgb(134, 98, 9);*/
+    background: #FFF3D6;
+    color: #74520A;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.logo {
+    color: var(--color-primary-dark);
+}
+
+.nav-button {
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    text-decoration: none;
+}
+
+.nav-button:hover, .nav-button.active {
+    background-color: #DDF1E1;
+    color: var(--color-primary-dark);
+    border-color: #8DBF98;
+}
+
+.button-logout {
+    color: var(--color-primary-dark);
+}
+
+.button-primario {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+}
+
+.button-primario:hover {
+    background: var(--color-primary-dark);
+    color: white;
+}
+
+.button-secundario {
+    background: #EAF5C9;
+    border-color: #C5D98A;
+    color: var(--color-primary-dark);
+}
+
+.card {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: 0 3px 12px rgba(29, 68, 47, 0.05);
+}
+
+.metric-card {
+    border-top: 4px solid var(--color-accent);
+}
+
+.metric-card h3 {
+    color: var(--color-primary);
+}
+
+.metric-value {
+    color: var(--color-primary-dark);
+    font-size: 1.5rem;
+}
+
+form.card {
+    display: grid;
+    gap: 0.75rem;
+}
+
+form.card input {
+    width: 100%;
+}
+
+form.card button {
+    width: auto;
+    justify-self: start;
+    background: var(--color-primary);
+    color: white;
+}
+
+form.card button:hover {
+    background: var(--color-primary-dark);
+}
+
+.table-container, .admin-table-container {
+    overflow-x: auto;
+}
+
+.admin-table-container {
+    margin-top: 1.5rem;
+}
+
+.admin-filter select, .filter-datos select {
+    min-width: 150px;
+}
+
+@media (max-width: 720px) {
+    .menu-toggle,
+    .menu-toggle-label {
+        display: block;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .menu-toggle:checked + .menu-toggle-label + .nav-links {
+        display: flex;
+    }
+}
+
+[x-cloak] { display: none !important; }
+
+.error-message { color: #8A2923; margin: 0.25rem 0 0.75rem; }
+
+/* Errores de validación de formularios (login y alta)*/
+.campo-error {
+    color: #8A2923;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0.25rem 0 0;
+}
+
+input[aria-invalid="true"], select[aria-invalid="true"] {
+    border: 2px solid #8A2923;
+}
+.muted, small.muted { color: var(--color-muted); }
+small.muted { display: block; }
+
+.toast-message {
+    position: fixed;
+    z-index: 20;
+    right: 1rem;
+    bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: min(92vw, 28rem);
+    padding: 0.85rem 1rem;
+    color: white;
+    background: var(--color-primary-dark);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.toast-message button { padding: 0.15rem 0.5rem; color: white; background: transparent; border-color: rgba(255,255,255,.5); }
+
+form label { display: grid; gap: 0.35rem; margin: 0.55rem 0; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+@media (max-width: 520px) {
+    .navbar { padding: 0.75rem; }
+    .logo { max-width: 58%; text-align: left; }
+    .main-container { width: min(100% - 1rem, 1100px); margin: 1rem auto; }
+    .admin-table th, .admin-table td, .tabla-datos th, .tabla-datos td,
+    .tabla-cultivos th, .tabla-cultivos td, .tabla-sensores th, .tabla-sensores td { padding: 0.55rem; }
+}

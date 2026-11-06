@@ -1,0 +1,18 @@
+form.card[hidden] {
+  display: none;
+    }
+
+    form div {
+      margin-bottom: 15px;
+    }
+
+    form .checkbox-field {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    form.card .checkbox-field input {
+      width: auto;
+      margin: 0;
+    }
