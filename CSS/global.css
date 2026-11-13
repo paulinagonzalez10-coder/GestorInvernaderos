@@ -64,6 +64,7 @@ input, select, textarea {
 }
 
 button, .button {
+    width: auto;
     padding: 0.65rem 1rem;
     color: var(--color-primary-dark);
     background: #E3F4E7;

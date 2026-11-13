@@ -167,9 +167,18 @@
 }
 
 @media (max-width: 520px) {
+    .admin-header-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
     .admin-header-actions .button,
     .user-actions button {
         width: 100%;
+    }
+
+    .user-actions {
+        flex-direction: column;
     }
 
     .admin-table .button-action {

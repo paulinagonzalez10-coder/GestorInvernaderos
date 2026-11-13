@@ -73,12 +73,10 @@
 }
 
 .button{
-    width: 100%;
+    width: auto;
     display: inline-block;
     text-align: center;
 }
-
-
 
 .quick-actions .button{
     width: auto;

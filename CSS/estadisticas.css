@@ -45,7 +45,7 @@
 }
 
 .chart-container figcaption { margin-bottom: 0.75rem; font-weight: 600; }
-.chart-container svg { display: block; width: 100%; min-width: 480px; overflow: visible; }
+.chart-container svg { display: block; width: 100%; min-width: 320px; overflow: visible; }
 .chart-gridline { stroke: #d8e4d9; stroke-width: 1; }
 .chart-line { fill: none; stroke: var(--color-primary); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
 .chart-point { fill: var(--color-primary-dark); stroke: white; stroke-width: 2; }
@@ -54,6 +54,7 @@
 
 @media (max-width: 600px) {
     .control-datos, .filter-datos { align-items: stretch; flex-direction: column; }
+    .chart-container { padding: 0.75rem; }
 }
 
 /*Había olvidado escribir el estilo para el gráfico y cuando lo revisé visualmente se veía horrible :c -->
