@@ -1,17 +1,17 @@
 // Service worker de la app (PWA). Guarda la interfaz en caché para que se pueda abrir sin conexión.
 // Subir este número cuando cambien los archivos, para que el navegador descargue la versión nueva.
-const CACHE = 'invernadero-v2';
+const CACHE = 'invernadero-v3';
 
 // Archivos locales de la app
 const ARCHIVOS = [
   './',
   'index.html',
   'manifest.json',
-  'icons/icono-planta192.png',
-  'icons/icono-planta512.png',
+  'Icons/icono-planta192.png',
+  'Icons/icono-planta512.png',
   'JS/app.js',
   'CSS/global.css',
-  'CSS/colorLogin.css',
+  'CSS/login.css',
   'CSS/dashboard.css',
   'CSS/invernadero.css',
   'CSS/agregar.css',
