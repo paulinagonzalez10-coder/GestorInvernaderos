@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="../../CSS/estadisticas.css">
   <link rel="stylesheet" href="../../CSS/global.css">
   <title>Datos - Estadísticas</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
   <script defer src="../../JS/app.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
@@ -47,7 +48,10 @@
 
     <figure class="chart-container" aria-labelledby="titulo-grafico">
       <figcaption id="titulo-grafico" x-text="tituloGrafico"></figcaption>
-      <div x-html="graficoHtml"></div>
+      <p class="muted" x-show="lecturasGrafico.length === 0">No hay lecturas para este sensor.</p>
+      <div class="chart-lienzo" x-show="lecturasGrafico.length > 0">
+        <canvas x-ref="lienzo" role="img" :aria-label="tituloGrafico + '. El detalle está en la tabla de abajo.'"></canvas>
+      </div>
     </figure>
 
     <div class="table-container">

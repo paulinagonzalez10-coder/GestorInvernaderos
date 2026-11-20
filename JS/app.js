@@ -850,7 +850,7 @@ document.addEventListener('alpine:init', () => {
 
     //----------------------------------------------------------------------------------------------------------------------------------
 
-    // Estadísticas: gráfico y tabla de lecturas por sensor, generados desde el store.
+    // Estadísticas: gráfico (Chart.js) y tabla de lecturas por sensor, generados desde el store.
     Alpine.data('estadisticas', () => ({
         sensorNombre: '',
         limite: '10',
@@ -858,6 +858,13 @@ document.addEventListener('alpine:init', () => {
         init() {
             const primero = this.sensoresConLecturas[0];
             this.sensorNombre = primero ? primero.nombre : '';
+
+            // $nextTick espera a que Alpine termine de dibujar la vista (y exista el <canvas>).
+            this.$nextTick(() => this.dibujarGrafico());
+
+            // Cada vez que cambia el sensor o la cantidad de registros, se actualiza el gráfico.
+            this.$watch('sensorNombre', () => this.actualizarGrafico());
+            this.$watch('limite', () => this.actualizarGrafico());
         },
 
         // Sensores que tienen al menos una lectura.
@@ -899,102 +906,85 @@ document.addEventListener('alpine:init', () => {
             //pensar que esto antes era un ejercicio completo evaluado en progra
         },
 
-        // "Escapa" texto antes de insertarlo como HTML ya que alpine no lee archivos SVG
-        escapar(texto) {
-            return String(texto)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
+        // Lee un color definido en global.css (:root), para que el gráfico use la paleta de la página.
+        colorCss(variable, respaldo) {
+            const valor = getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
+            return valor || respaldo;
         },
 
-        // Coordenadas de cada punto dentro del viewBox 720 x 280.
-        get puntos() {
-            const datos = this.lecturasGrafico;
-            if (datos.length === 0) {
-                return [];
+        // Crea el gráfico de líneas la primera vez.
+        // La instancia NO se guarda en el componente: Alpine envuelve sus datos en un Proxy y
+        // Chart.js falla dentro de uno. Para recuperarla se usa Chart.getChart(canvas).
+        dibujarGrafico() {
+            // Si el CDN de Chart.js no cargó (por ejemplo, sin internet), la tabla sigue funcionando.
+            if (typeof Chart === 'undefined') {
+                console.warn('Chart.js no está disponible; solo se muestra la tabla.');
+                return;
             }
 
-            const valores = datos.map((l) => l.valor);
-            let min = Math.min(...valores);
-            let max = Math.max(...valores);
-            if (min === max) {
-                min -= 1;
-                max += 1;
-            }
-            const margen = (max - min) * 0.1;
-            min -= margen;
-            max += margen;
+            const verde = this.colorCss('--color-primary', '#16834A');
+            const verdeOscuro = this.colorCss('--color-primary-dark', '#105C34');
+            const colorTexto = this.colorCss('--color-text', '#20352A');
 
-            const xInicio = 60;
-            const xFin = 700;
-            const yBase = 235;
-            const yTope = 40;
-
-            return datos.map((l, i) => {
-                let x;
-                if (datos.length === 1) {
-                    x = (xInicio + xFin) / 2;
-                } 
-                else {
-                    x = xInicio + i * (xFin - xInicio) / (datos.length - 1);
+            new Chart(this.$refs.lienzo, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: '',
+                        data: [],
+                        borderColor: verde,
+                        backgroundColor: verde + '26', // mismo verde con transparencia (26 en hexadecimal ≈ 15%)
+                        pointBackgroundColor: verdeOscuro,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        borderWidth: 3,
+                        tension: 0.3, // suaviza la línea entre puntos
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // el alto lo define el CSS (.chart-lienzo)
+                    plugins: {
+                        legend: { display: false }, // el título ya está en el <figcaption>
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.parsed.y} ${this.unidad}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Fecha', color: colorTexto },
+                            ticks: { color: colorTexto }
+                        },
+                        y: {
+                            title: { display: true, text: 'Valor', color: colorTexto },
+                            ticks: { color: colorTexto }
+                        }
+                    }
                 }
-                const y = yBase - (l.valor - min) / (max - min) * (yBase - yTope);
-                const fecha = this.formatearFecha(l.fecha);
-                return {
-                    x: x.toFixed(1),
-                    y: y.toFixed(1),
-                    valor: l.valor,
-                    fecha,
-                    etiqueta: fecha.slice(0, 5)
-                };
             });
+
+            this.actualizarGrafico();
         },
 
-        // SVG del gráfico (se inserta con x-html; todo el texto va escapado).
-        get graficoHtml() {
-            const puntos = this.puntos;
-            if (puntos.length === 0) {
-                return '<p class="muted">No hay lecturas para este sensor.</p>';
+        // Reemplaza los datos del gráfico con las lecturas del sensor elegido.
+        actualizarGrafico() {
+            if (typeof Chart === 'undefined') {
+                return;
             }
-
-            const polilinea = puntos.map((p) => `${p.x},${p.y}`).join(' ');
-            const marcas = puntos.map((p) => `
-            <g>
-            <circle class="chart-point" cx="${p.x}" cy="${p.y}" r="5"><title>${this.escapar(p.fecha)}: ${this.escapar(p.valor)} ${this.escapar(this.unidad)}</title></circle>
-            <text class="chart-label" x="${p.x}" y="260" text-anchor="middle">${this.escapar(p.etiqueta)}</text>
-            </g>`).join('');
-
-            // Marcas del eje vertical: mínimo, punto medio y máximo, en la unidad del sensor.
-            const { min, max } = this.escala;
-            const yDe = (v) => (235 - (v - min) / (max - min) * (235 - 40)).toFixed(1);
-            const marcasY = [0, 0.5, 1].map((k) => {
-                const v = min + k * (max - min);
-                const texto = this.escapar(String(Number(v.toFixed(2))));
-                return `
-                <line class="chart-gridline" x1="60" y1="${yDe(v)}" x2="700" y2="${yDe(v)}"></line>
-                <text class="chart-label" x="52" y="${yDe(v)}" dy="4" text-anchor="end">${texto}</text>`;
-            }).join('');
-
-            const unidad = this.escapar(this.unidad);
-            let etiquetaUnidad = '';
-            if (unidad) {
-                etiquetaUnidad = ` (${unidad})`;
+            const grafico = Chart.getChart(this.$refs.lienzo);
+            if (!grafico) {
+                return;
             }
-
-            return `
-            <svg viewBox="0 0 720 290" role="img" aria-labelledby="titulo-grafico descripcion-grafico">
-            <desc id="descripcion-grafico">Gráfico de ${puntos.length} lecturas de ${this.escapar(this.sensorNombre)}, ordenadas cronológicamente.</desc>
-            ${marcasY}
-            <line class="chart-gridline" x1="60" y1="40" x2="60" y2="235"></line>
-            <text class="chart-label" transform="rotate(-90 14 137)" x="14" y="137" text-anchor="middle">Valor${etiquetaUnidad}</text>
-            <polyline class="chart-line" points="${polilinea}"></polyline>
-            ${marcas}
-            <text class="chart-label" x="380" y="284" text-anchor="middle">Fecha (DD-MM)</text>
-            </svg>`;
-            //horror puro, no habría puesto un gráfico de no ser por que nos lo piden
-            //quizás si lo dejaba estático pasaba piola ;-;
+            const lecturas = this.lecturasGrafico;
+            grafico.data.labels = lecturas.map((l) => this.formatearFecha(l.fecha));
+            grafico.data.datasets[0].data = lecturas.map((l) => l.valor);
+            grafico.data.datasets[0].label = this.sensorNombre;
+            grafico.options.scales.y.title.text = this.unidad ? `Valor (${this.unidad})` : 'Valor';
+            grafico.update();
         }
     }));
 
